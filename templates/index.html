@@ -5,12 +5,11 @@
         {% for post in posts %}
         <a href="#">
             <h2>Date {{ post['stdate'] }}</h2>
-            <h2>temp_max {{ post['temperature_max'] }}</h2>
-            <h2>temp_min {{ post['temperature_min'] }}</h2>
-            <h2>humidity {{ post['humidity'] }}</h2>
 
         </a>
-        <span class="badge badge-primary">{{ post['created'] }}</span>
+        <span class="badge badge-primary">T.max: {{ post['temperature_max'] }}</span>
+        <span class="badge badge-primary">T.min: {{ post['temperature_max'] }}</span>
+        <span class="badge badge-primary">Hum: {{ post['humidity'] }}</span>
         <hr>
     {% endfor %}
 {% endblock %}
