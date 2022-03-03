@@ -25,11 +25,7 @@ def get_today():
     min_temp=data['consolidated_weather'][0]['min_temp']
     humidity=data['consolidated_weather'][0]['humidity']
     id=data['consolidated_weather'][0]['id']
-    #print('max temp',max_temp)
-    #print('min temp',min_temp)
-    print('hum',humidity)
-    #print(id)
-    #return max_temp,min_temp,humidity,today
+    print('DEBUG hum:',humidity)
     global td
     td = (max_temp,min_temp,humidity,today)
     return td
@@ -44,11 +40,7 @@ def get_yearago():
     min_temp_y=data2[0]['min_temp']
     humidity_y=data2[0]['humidity']
     id=data2[0]['id']
-    #print('year ago max temp',max_temp_y)
-    #print('year ago min temp',min_temp_y)
-    #print('year ago hum',humidity_y)
-    #print(id)
-    #return  max_temp_y,min_temp_y,humidity_y,yearago
+    print('Debug temp',max_temp_y)
     global yg
     yg = (max_temp_y,min_temp_y,humidity_y,yearago)
     return yg
@@ -84,6 +76,7 @@ def index():
                 conn.close()
     if request.method == 'POST':
         get_today()
+        get_yearago()
         print("debug-post",td)
         try:
             #connect to db
@@ -97,6 +90,12 @@ def index():
             #do insert
             cursor.execute(query,data)
             #cursor.execute("INSERT INTO mes (temperature_max, temperature_min, humidity,stdate)  VALUES (01 , 66, 55, '1999-01-01');")
+            conn.commit()
+            #do insert of data year ago
+            data2 = yg
+            print('debug',data2) 
+            query2 = "INSERT INTO mes (temperature_max, temperature_min, humidity, stdate)  VALUES (%s , %s, %s, %s);"
+            cursor.execute(query2,data2)
             conn.commit()
             #read from db
             cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)

@@ -4,7 +4,7 @@
     <h1>{% block title %}Weather {% endblock %}</h1>
         {% for post in posts %}
         <a href="#">
-            <h2>Date {{ post['stdate'] }}</h2>
+            <h2>Date {{ post['stdate'] }} request time {{ post['sttime'] }}</h2>
 
         </a>
         <span class="badge badge-primary">T.max: {{ post['temperature_max'] }}</span>
