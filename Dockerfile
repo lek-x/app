@@ -11,6 +11,7 @@ ADD static ./static
 ADD templates ./templates
 COPY ["hello.py", "init_db.py", "entrypoint.sh", "./"]
 RUN chmod +x /app/entrypoint.sh \
+    && python -m pip install --upgrade pip \
     && pip install -r /requirements.txt \
     && pip cache purge
 EXPOSE 5000
