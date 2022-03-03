@@ -1,2 +1,4 @@
 # created by virtualenv automatically
 pyvenv.cfg
+__pycache__/
+

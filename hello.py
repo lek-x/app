@@ -2,6 +2,7 @@
 weather small app
 """
 from __future__ import absolute_import
+import os
 import json
 from datetime import datetime
 import psycopg2
@@ -10,10 +11,17 @@ from flask import Flask, request, render_template
 import requests
 from dateutil.relativedelta import relativedelta
 
+####Date section
 today=datetime.today().strftime('%Y-%m-%d')
 year_ago=datetime.today() - relativedelta(years=1)
 year_ago=(str(year_ago))[0:10]
 city = 2123260
+##### Env. section
+dname=os.environ.get("dname")
+duser=os.environ.get("duser")
+dpass=os.environ.get("dpass")
+dbhost=os.environ.get("dbhost")
+prt=os.environ.get("prt")
 
 
 def get_today():
@@ -51,8 +59,8 @@ def get_yearago():
 
 def get_db_connection():
     "settings to connect to db"
-    conn = psycopg2.connect(dbname='postgres', user='postgres',
-                        password='test', host='localhost')
+    conn = psycopg2.connect(dbname=dname, user=duser,
+                        password=dpass, host=dbhost, port=prt)
     return conn
 
 app = Flask(__name__)
