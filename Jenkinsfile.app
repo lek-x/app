@@ -54,6 +54,12 @@ pipeline {
                 sh 'sudo docker push ghcr.io/$IMAGE_NAME:$IMAGE_VERSION'
             }
         }
+		
+		stage('deploy to dev'){
+		     steps{
+			 sh 'envsubst < $WORKSPACE/k8s/app_dep.yaml | kubectl apply -f - ' 
+			 }
+		}
             
         }
     post {
