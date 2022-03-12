@@ -10,9 +10,11 @@ pipeline {
         BranchName = "${BRANCH_NAME}"
     }
     stages {
+        stage('Checkout') {
+            steps {echo "$BranchName"}
+            } 
         stage('Test'){
             steps{
-                echo "$BranchName"
                 sh "cd ${WORKSPACE}"
                 sh "pylint --py3k hello.py init_db.py"
                 }
