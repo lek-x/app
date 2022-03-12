@@ -8,7 +8,7 @@ pipeline {
     }
     stages {
         stage('Checkout') {
-            steps {checkout([$class: 'GitSCM', branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[credentialsId: '9f93b5c6-dd61-4259-9fc8-164b7f4318f3', url: 'git@github.com:lek-x/app.git']]])
+            steps {checkout([$class: 'GitSCM', branches: [[name: '*/test-dev']], extensions: [], userRemoteConfigs: [[credentialsId: '9f93b5c6-dd61-4259-9fc8-164b7f4318f3', url: 'git@github.com:lek-x/app.git']]])
             }
             } 
         stage('Test'){
