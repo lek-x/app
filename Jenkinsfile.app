@@ -1,7 +1,11 @@
 pipeline {
     agent any
 
-    options {timestamps ()}
+    options {
+    buildDiscarder logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '', numToKeepStr: '3')
+    disableConcurrentBuilds()
+	timestamps ()
+	}
     environment {
         GITHUB_TOKEN=credentials('github-token')
         IMAGE_NAME='lek-x/app'
@@ -9,8 +13,9 @@ pipeline {
         BranchName = "${BRANCH_NAME}"
     }
     stages {
-        stage('Checkout') {
-            steps {echo "$BranchName"}
+        stage('Debug') {
+            steps {
+                 echo "$BranchName"}
             } 
         stage('Test'){
             steps{
@@ -55,12 +60,18 @@ pipeline {
                 sh 'sudo docker push ghcr.io/$IMAGE_NAME:$IMAGE_VERSION'
             }
         }
-		
-		stage('deploy to dev'){
-		     steps{
-			 sh 'sudo envsubst < $WORKSPACE/k8s/app_dep.yaml | kubectl apply -f - ' 
-			 }
-		}
+        stage('Deploy if master'){
+          when{environment name: 'BranchName', value: 'master'}
+            steps{
+              deploy('master')
+             }
+            }
+        stage('Deploy if test-dev'){
+          when{environment name: 'BranchName', value: 'test-dev'}
+            steps{
+              deploy('test-dev')
+             }
+            }
             
         }
     post {
@@ -68,4 +79,14 @@ pipeline {
             sh 'sudo docker logout'
         }
     }
+}
+
+def deploy(BranchName) {
+
+	if ("${BranchName}" == 'master') {
+		echo "Deploy to master"} 
+	else if ("${BranchName}" == 'test-dev') {
+	    echo "Deploy to test"
+	}
+
 }
