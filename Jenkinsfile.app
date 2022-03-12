@@ -1,7 +1,6 @@
 pipeline {
     agent any
-    buildDiscarder logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '', numToKeepStr: '3')
-    disableConcurrentBuilds()
+
     options {timestamps ()}
     environment {
         GITHUB_TOKEN=credentials('github-token')
