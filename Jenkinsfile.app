@@ -1,15 +1,21 @@
 pipeline {
     agent any
-    options {timestamps ()}
+
+    options {
+    buildDiscarder logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '', numToKeepStr: '3')
+    disableConcurrentBuilds()
+	timestamps ()
+	}
     environment {
         GITHUB_TOKEN=credentials('github-token')
         IMAGE_NAME='lek-x/app'
         IMAGE_VERSION='1.0-b'
+        BranchName = "${BRANCH_NAME}"
     }
     stages {
-        stage('Checkout') {
-            steps {checkout([$class: 'GitSCM', branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[credentialsId: '9f93b5c6-dd61-4259-9fc8-164b7f4318f3', url: 'git@github.com:lek-x/app.git']]])
-            }
+        stage('Debug') {
+            steps {
+                 echo "$BranchName"}
             } 
         stage('Test'){
             steps{
@@ -54,6 +60,18 @@ pipeline {
                 sh 'sudo docker push ghcr.io/$IMAGE_NAME:$IMAGE_VERSION'
             }
         }
+        stage('Deploy if master'){
+          when{environment name: 'BranchName', value: 'master'}
+            steps{
+              deploy('master')
+             }
+            }
+        stage('Deploy if test-dev'){
+          when{environment name: 'BranchName', value: 'test-dev'}
+            steps{
+              deploy('test-dev')
+             }
+            }
             
         }
     post {
@@ -61,4 +79,25 @@ pipeline {
             sh 'sudo docker logout'
         }
     }
+}
+
+def deploy(BranchName) {
+
+	if ("${BranchName}" == 'master') {
+           script {
+             def userInput = input(id: 'Proceed1', message: 'Promote build?', parameters: [[$class: 'BooleanParameterDefinition', defaultValue: true, description: '', name: 'Please confirm you agree with this']])
+             echo 'userInput: ' + userInput
+             if(userInput == true) {
+                echo "Start deploying"
+            } else {
+                echo "Action was aborted."
+            }
+
+        }
+      }		
+	else if ("${BranchName}" == 'test-dev') {
+	    echo "Deploy to test"
+		sh 'envsubst < $WORKSPACE/k8s/app_dep.yaml | kubectl apply -f - '
+	}
+
 }
