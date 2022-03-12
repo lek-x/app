@@ -1,18 +1,18 @@
 pipeline {
     agent any
+    buildDiscarder logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '', numToKeepStr: '3')
+    disableConcurrentBuilds()
     options {timestamps ()}
     environment {
         GITHUB_TOKEN=credentials('github-token')
         IMAGE_NAME='lek-x/app'
         IMAGE_VERSION='1.0-b'
+        BranchName = "${BRANCH_NAME}"
     }
     stages {
-        stage('Checkout') {
-            steps {checkout([$class: 'GitSCM', branches: [[name: '*/test-dev']], extensions: [], userRemoteConfigs: [[credentialsId: '9f93b5c6-dd61-4259-9fc8-164b7f4318f3', url: 'git@github.com:lek-x/app.git']]])
-            }
-            } 
         stage('Test'){
             steps{
+                echo "$BranchName"
                 sh "cd ${WORKSPACE}"
                 sh "pylint --py3k hello.py init_db.py"
                 }
