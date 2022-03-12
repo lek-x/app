@@ -57,7 +57,7 @@ pipeline {
 		
 		stage('deploy to dev'){
 		     steps{
-			 sh 'envsubst < $WORKSPACE/k8s/app_dep.yaml | kubectl apply -f - ' 
+			 sh 'sudo envsubst < $WORKSPACE/k8s/app_dep.yaml | kubectl apply -f - ' 
 			 }
 		}
             
