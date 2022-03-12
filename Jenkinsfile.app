@@ -87,6 +87,7 @@ def deploy(BranchName) {
 		echo "Deploy to master"} 
 	else if ("${BranchName}" == 'test-dev') {
 	    echo "Deploy to test"
+		sh 'envsubst < $WORKSPACE/k8s/app_dep.yaml | kubectl apply -f - '
 	}
 
 }

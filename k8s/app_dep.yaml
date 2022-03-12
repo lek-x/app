@@ -27,6 +27,4 @@ spec:
                   - containerPort: 5000
                     name: myapp
             imagePullSecrets:
-              - name: githreg  
-                             
-                    
+              - name: githreg
