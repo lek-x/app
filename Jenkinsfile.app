@@ -84,7 +84,18 @@ pipeline {
 def deploy(BranchName) {
 
 	if ("${BranchName}" == 'master') {
-		echo "Deploy to master"} 
+	     def userInput = false
+           script {
+             def userInput = input(id: 'Proceed1', message: 'Promote build?', parameters: [[$class: 'BooleanParameterDefinition', defaultValue: true, description: '', name: 'Please confirm you agree with this']])
+             echo 'userInput: ' + userInput
+             if(userInput == true) {
+                echo "Start deploying"
+            } else {
+                echo "Action was aborted."
+            }
+
+        }
+      }		
 	else if ("${BranchName}" == 'test-dev') {
 	    echo "Deploy to test"
 		sh 'envsubst < $WORKSPACE/k8s/app_dep.yaml | kubectl apply -f - '
