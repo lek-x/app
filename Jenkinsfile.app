@@ -30,7 +30,7 @@ pipeline {
                      git tag -a "$ntg" -m "created by jenkins"
                      else
                      echo "tags not found"
-					 #git tag -a "temp_tag" -m "created by jenkins"
+					 git tag -a "v1.0" -m "created by jenkins"
                      fi
 					 echo "Last tag $git_tag_pv"
 				     echo "Current tag $git_tag_pr"
@@ -78,6 +78,7 @@ pipeline {
         }
         stage('tag image'){
             steps{
+			     echo "Debug tag ${env.TG}"
                 sh 'sudo docker tag $IMAGE_NAME:${env.TG} ghcr.io/$IMAGE_NAME:${env.TG}'
             }
         }
