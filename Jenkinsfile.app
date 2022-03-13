@@ -9,13 +9,15 @@ pipeline {
     environment {
         GITHUB_TOKEN=credentials('github-token')
         IMAGE_NAME='lek-x/app'
-        IMAGE_VERSION='1.0-b'
+        IMAGE_VERSION='1.0-c'
         BranchName = "${BRANCH_NAME}"
     }
     stages {
         stage('Debug') {
             steps {
-                 echo "$BranchName"}
+                 echo "Branch name $BranchName"
+				 echo "Building $TAG_NAME"
+				 }
             } 
         stage('Test'){
             steps{
@@ -89,6 +91,7 @@ def deploy(BranchName) {
              echo 'userInput: ' + userInput
              if(userInput == true) {
                 echo "Start deploying"
+                sh 'envsubst < $WORKSPACE/k8s/app_dep.yaml | kubectl replace -f - ' 
             } else {
                 echo "Action was aborted."
             }
