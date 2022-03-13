@@ -18,7 +18,7 @@ pipeline {
             steps {
 				script {
 				  sh(script: '''#!/bin/bash 
-				     git_tag_pv=$(git describe --tags --exact-match HEAD~1)    ##looking previous commit and his tag
+				     git_tag_pv=$(git rev-list --tags --skip=1 --timestamp --no-walk | sort -nr | head -n1 | cut -f 2 -d ' ' | xargs git describe --contains)    ##looking previous commit and his tag
                      git_tag_pr=$(git name-rev --name-only --tags HEAD)  ### looking current commit and his tag
                      if [[ $git_tag_pr == undefined && $git_tag_pv == v* ]]; then
                      echo 'we found a previous tag and present commit without tag'
@@ -30,7 +30,7 @@ pipeline {
                      git tag -a "$ntg" -m "created by jenkins"
                      else
                      echo "tags not found"
-					 git tag -a "temp_tag" -m "created by jenkins"
+					 #git tag -a "temp_tag" -m "created by jenkins"
                      fi
 				  '''.stripIndent())}
                  echo "Branch name $BranchName"
