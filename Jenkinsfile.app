@@ -11,12 +11,13 @@ pipeline {
         IMAGE_NAME='lek-x/app'
         IMAGE_VERSION='1.0-c'
         BranchName = "${BRANCH_NAME}"
+		TAG = sh (script: 'git tag | tail -1 | tr -d [:lower:]', returnStdout: true).trim()
     }
     stages {
         stage('Debug') {
             steps {
                  echo "Branch name $BranchName"
-				 echo "Building $TAG_NAME"
+				 echo "Building $TAG"
 				 }
             } 
         stage('Test'){
