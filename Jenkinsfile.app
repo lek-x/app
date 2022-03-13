@@ -36,6 +36,7 @@ pipeline {
 				     echo "Current tag $git_tag_pr"
 				  '''.stripIndent())}
                  echo "Branch name $BranchName"
+				 echo "Buld number is ${BUILD_NUMBER}"
 				 
 				 }
             } 
