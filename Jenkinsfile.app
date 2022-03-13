@@ -9,35 +9,15 @@ pipeline {
     environment {
         GITHUB_TOKEN=credentials('github-token')
         IMAGE_NAME='lek-x/app'
-        IMAGE_VERSION='1.0-d'
+        IMAGE_VERSION="${BUILD_NUMBER}"
         BranchName = "${BRANCH_NAME}"
-		TAG = sh (script: 'git tag | tail -1 | tr -d [:lower:]', returnStdout: true).trim()
     }
     stages {
-        stage('Check tags') {
+        stage('Debug ENVs') {
             steps {
-				script {
-				  sh(script: '''#!/bin/bash 
-				     git_tag_pv=$(git describe --tags --exact-match HEAD~1)    ##looking previous commit and his tag
-                     git_tag_pr=$(git name-rev --name-only --tags HEAD)  ### looking current commit and his tag
-                     if [[ $git_tag_pr == undefined && $git_tag_pv == v* ]]; then
-                     echo 'we found a previous tag and present commit without tag'
-                     stre=$git_tag_pv
-                     bst=$(echo $stre | tr "v" "\n")
-                     ntg=$(awk -v var="$bst" 'BEGIN {print (var+0.1)}')
-                     ntg="v""$ntg"
-                     echo $ntg
-                     git tag -a "$ntg" -m "created by jenkins"
-                     else
-                     echo "tags not found"
-					 git tag -a "v1.0" -m "created by jenkins"
-                     fi
-					 echo "Last tag $git_tag_pv"
-				     echo "Current tag $git_tag_pr"
-				  '''.stripIndent())}
                  echo "Branch name $BranchName"
-				 echo "Buld number is ${BUILD_NUMBER}"
-				 
+				 echo "Buld number is $IMAGE_NAME"
+				 echo "Buld number is $IMAGE_VERSION"
 				 }
             } 
         stage('Test'){
@@ -52,13 +32,10 @@ pipeline {
             }
         }    
         stage('Build docker image'){
-			environment{
-			     TG= sh(returnStdout: true, returnStatus: false, script: 'git name-rev --name-only --tags HEAD').trim()
-				 }
             steps{
-			    echo "Current build tag is ${env.TG}"
+			    echo "Current build version is $IMAGE_NAME:$IMAGE_VERSION"
                 sh "cd ${WORKSPACE}"
-                sh "sudo docker build . -t $IMAGE_NAME:${env.TG}"
+                sh "sudo docker build . -t $IMAGE_NAME:$IMAGE_VERSION"
                 sh "sudo docker images"
             }    
         }
@@ -80,12 +57,12 @@ pipeline {
         stage('tag image'){
             steps{
 			     echo "Debug tag ${env.TG}"
-                sh 'sudo docker tag $IMAGE_NAME:${env.TG} ghcr.io/$IMAGE_NAME:${env.TG}'
+                sh 'sudo docker tag $IMAGE_NAME:$IMAGE_VERSION ghcr.io/$IMAGE_NAME:$IMAGE_VERSION'
             }
         }
         stage('push image'){
             steps{
-                sh 'sudo docker push ghcr.io/$IMAGE_NAME:${env.TG}'
+                sh 'sudo docker push ghcr.io/$IMAGE_NAME:$IMAGE_VERSION'
             }
         }
         stage('Deploy if master'){
@@ -117,7 +94,7 @@ def deploy(BranchName) {
              echo 'userInput: ' + userInput
              if(userInput == true) {
                 echo "Start deploying"
-                sh 'kubectl set image deployment/myapp myapp=ghcr.io/$IMAGE_NAME:${env.TG}'
+                sh 'kubectl set image deployment/myapp myapp=ghcr.io/$IMAGE_NAME:$IMAGE_VERSION'
             } else {
                 echo "Action was aborted."
             }
@@ -126,7 +103,7 @@ def deploy(BranchName) {
       }		
 	else if ("${BranchName}" == 'test-dev') {
 	    echo "Deploy to test"
-		sh 'kubectl set image deployment/myapp myapp=ghcr.io/$IMAGE_NAME:${env.TG}' 
+		sh 'kubectl set image deployment/myapp myapp=ghcr.io/$IMAGE_NAME:$IMAGE_VERSION' 
 	}
 
 }
