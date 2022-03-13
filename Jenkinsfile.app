@@ -30,11 +30,12 @@ pipeline {
                      git tag -a "$ntg" -m "created by jenkins"
                      else
                      echo "tags not found"
-					 git tag -a temp_tag -m "created by jenkins"
+					 git tag -a "temp_tag" -m "created by jenkins"
                      fi
 				  '''.stripIndent())}
                  echo "Branch name $BranchName"
-				 echo "Building $TAG"
+				 echo "Last tag $git_tag_pv"
+				 echo "Current tag $git_tag_pr"
 				 }
             } 
         stage('Test'){
