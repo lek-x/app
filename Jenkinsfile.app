@@ -92,7 +92,7 @@ def deploy(BranchName) {
              echo 'userInput: ' + userInput
              if(userInput == true) {
                 echo "Start deploying"
-                sh 'kubectl set image deployment/myapp myapp=$IMAGE_NAME:$IMAGE_VERSION' 
+                sh 'kubectl set image deployment/myapp myapp=ghcr.io/$IMAGE_NAME:$IMAGE_VERSION' 
             } else {
                 echo "Action was aborted."
             }
@@ -101,7 +101,7 @@ def deploy(BranchName) {
       }		
 	else if ("${BranchName}" == 'test-dev') {
 	    echo "Deploy to test"
-		sh 'envsubst < $WORKSPACE/k8s/app_dep.yaml | kubectl apply -f - '
+		sh 'kubectl set image deployment/myapp myapp=ghcr.io/$IMAGE_NAME:$IMAGE_VERSION' 
 	}
 
 }
