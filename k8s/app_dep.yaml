@@ -5,7 +5,7 @@ metadata:
         app: myapp
     name: myapp
 spec:
-    replicas: 1
+    replicas: 2
     selector:
         matchLabels:
             app: myapp
@@ -15,8 +15,8 @@ spec:
                 app: myapp
         spec:
             containers:
-              - image: ghcr.io/lek-x/$IMAGE_NAME:$IMAGE_VERSION
-                imagePullPolicy: IfNotPresent
+              - image: ghcr.io/$IMAGE_NAME:$IMAGE_VERSION
+                imagePullPolicy: Always
                 name: myapp
                 envFrom:
                   - secretRef:
