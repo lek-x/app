@@ -4,7 +4,10 @@ metadata:
   name: kibana-np
 spec:
   selector: 
-    app: kibana 
+    app: kibana
+  type: NodePort
+  #type: LoadBalancer
   ports:
     - port: 8080
-      targetPort: 5601 
+      targetPort: 5601
+      nodePort: 30000

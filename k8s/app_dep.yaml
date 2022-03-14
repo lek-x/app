@@ -15,7 +15,7 @@ spec:
                 app: myapp
         spec:
             containers:
-              - image: ghcr.io/$IMAGE_NAME:$IMAGE_VERSION
+              - image: ghcr.io/lek-x/app:15
                 imagePullPolicy: Always
                 name: myapp
                 envFrom:

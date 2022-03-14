@@ -16,8 +16,8 @@ pipeline {
         stage('Debug ENVs') {
             steps {
                  echo "Branch name $BranchName"
-				 echo "Buld number is $IMAGE_NAME"
-				 echo "Buld number is $IMAGE_VERSION"
+				 echo "Build number is $IMAGE_NAME"
+				 echo "Build number is $IMAGE_VERSION"
 				 }
             } 
         stage('Test'){
