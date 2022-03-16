@@ -4,12 +4,12 @@
     <h1>{% block title %}Weather {% endblock %}</h1>
         {% for post in posts %}
         <a href="#">
-            <h2>Date {{ post['stdate'] }} request time {{ post['sttime'] }}</h2>
+            <h2>Request Date {{ post['stdate'] }}</h2>
 
         </a>
-        <span class="badge badge-primary">T.max: {{ post['temperature_max'] }}</span>
-        <span class="badge badge-primary">T.min: {{ post['temperature_max'] }}</span>
-        <span class="badge badge-primary">Hum: {{ post['humidity'] }}</span>
+        <span class="badge badge-danger">Temp.max: {{ post['temperature_max'] }}<p>&#x2103;</p></span>
+        <span class="badge badge-primary">Temp.min:  {{ post['temperature_max'] }}<p>&#x2103;</p></span>
+        <span class="badge badge-dark">Humidity: {{ post['humidity'] }} %</span>
         <hr>
     {% endfor %}
 {% endblock %}

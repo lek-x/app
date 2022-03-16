@@ -39,7 +39,7 @@ def get_today():
     max_temp=data['consolidated_weather'][0]['max_temp']
     min_temp=data['consolidated_weather'][0]['min_temp']
     humidity=data['consolidated_weather'][0]['humidity']
-    print('DEBUG hum:',humidity)
+    #print('debug: humidity is',humidity)
     global td
     td = (max_temp,min_temp,humidity,today)
     return td
@@ -55,7 +55,7 @@ def get_yearago():
     max_temp_y=data2[0]['max_temp']
     min_temp_y=data2[0]['min_temp']
     humidity_y=data2[0]['humidity']
-    print('Debug temp',max_temp_y)
+    #print('debug: temp is',max_temp_y)
     global yg
     yg = (max_temp_y,min_temp_y,humidity_y,year_ago)
     return yg
@@ -74,6 +74,7 @@ app = Flask(__name__)
 @app.route("/", methods=('GET', 'POST'))
 def index():
     "main page func."
+    print("debug: recieved method is", request.method)
     if request.method == 'GET':
         try:
             conn = get_db_connection()
@@ -89,39 +90,59 @@ def index():
             if conn is not None:
                 conn.close()
     if request.method == 'POST':
-        calc_date()
-        get_today()
-        get_yearago()
-        print("debug-post",yg,td)
-        try:
-            #connect to db
-            conn = get_db_connection()
-            cursor = conn.cursor()
-            #prepare query
-            query = "INSERT INTO mes (temperature_max, temperature_min, humidity, stdate) \
-			VALUES (%s , %s, %s, %s);"
-            #td returns from get_today()
-            data = td
-            print("debug",data)
-            #do insert
-            cursor.execute(query,data)
-            conn.commit()
-            #do insert of data year ago
-            data2=yg
-            print('debug',data2)
-            query2 = "INSERT INTO mes (temperature_max, temperature_min, humidity, stdate) \
-			VALUES (%s , %s, %s, %s);"
-            cursor.execute(query2,data2)
-            conn.commit()
-            #read from db
-            cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-            cursor.execute("SELECT * from mes")
-            posts = cursor.fetchall()
-            conn.close()
-            print("DEBUG",posts)
-            return render_template('index.html', posts=posts)
-        except (Exception, psycopg2.DatabaseError) as error:
-            print(error)
-        finally:
-            if conn is not None:
+        print("debug: entering in POST method")
+        v=request.form
+        val=list(v.values())
+        print("debug: recieved value", val)
+        if val[0] == 'sync':
+            print("debug: get SYNC request")
+            calc_date()
+            get_today()
+            get_yearago()
+            try:
+                #connect to db
+                conn = get_db_connection()
+                cursor = conn.cursor()
+                #prepare query
+                query = "INSERT INTO mes (temperature_max, temperature_min, humidity, stdate) \
+		    	VALUES (%s , %s, %s, %s);"
+                #td returns from get_today()
+                data = td
+                #do insert
+                cursor.execute(query,data)
+                conn.commit()
+                #do insert of data year ago
+                data2=yg
+                query2 = "INSERT INTO mes (temperature_max, temperature_min, humidity, stdate) \
+		    	VALUES (%s , %s, %s, %s);"
+                cursor.execute(query2,data2)
+                conn.commit()
+                #read from db
+                cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+                cursor.execute("SELECT * from mes")
+                posts = cursor.fetchall()
                 conn.close()
+                return render_template('index.html', posts=posts)
+            except (Exception, psycopg2.DatabaseError) as error:
+                print(error)
+            finally:
+                if conn is not None:
+                    conn.close()
+        if  val[0] == 'clean':
+            print("debug: get CLEAN request")
+            try:
+                #connect to db
+                conn = get_db_connection()
+                cursor = conn.cursor()
+                #prepare query
+                query = "truncate table mes;"
+                #do insert
+                cursor.execute(query)
+                conn.commit()
+                conn.close()
+                return render_template('index.html', posts=posts)
+            except (Exception, psycopg2.DatabaseError) as error:
+                print(error)
+            finally:
+                if conn is not None:
+                    conn.close()           
