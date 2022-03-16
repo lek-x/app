@@ -18,7 +18,7 @@ spec:
       serviceAccountName: fluentd
       containers:
       - name: fluentd
-        image: fluent/fluentd-kubernetes-daemonset:v1.14.5-debian-elasticsearch7-amd64-1.1
+        image: fluent/fluentd-kubernetes-daemonset:v1.14-debian-elasticsearch7-1
         env:
           - name:  FLUENT_ELASTICSEARCH_HOST
             value: "elasticsearch.default.svc.cluster.local"
@@ -28,18 +28,20 @@ spec:
             value: "http"
           - name: FLUENTD_SYSTEMD_CONF
             value: disable
-          - name: FLUENT_CONTAINER_TAIL_PARSER_TYPE
-            value: /^(?<time>.+) (?<stream>stdout|stderr) [^ ]* (?<log>.*)$/
+          - name: FLUENT_UID
+            value: "0"
+          #- name: FLUENT_CONTAINER_TAIL_PARSER_TYPE
+          #  value: /^(?<time>.+) (?<stream>stdout|stderr)( (?<logtag>.))? (?<log>.*)$/
         resources:
           limits:
-            memory: 512Mi
+            memory: 200Mi
           requests:
             cpu: 100m
             memory: 200Mi    
         volumeMounts:
-        - name: fluentd-config
-          mountPath: /fluentd/etc/kubernetes.conf
-          subPath: kubernetes.conf
+        #- name: fluentd-config
+        #  mountPath: /fluentd/etc/kubernetes.conf
+        #  subPath: kubernetes.conf
         - name: varlog
           mountPath: /var/log
         - name: varlibdockercontainers
@@ -53,9 +55,9 @@ spec:
       - name: varlibdockercontainers
         hostPath:
           path: /var/lib/docker/containers
-      - name: fluentd-config
-        configMap:
-          name: fluentd-config
-          items:
-            - key: kubernetes.conf
-              path: kubernetes.conf
+      #- name: fluentd-config
+      #  configMap:
+      #    name: fluentd-config
+      #    items:
+      #      - key: kubernetes.conf
+      #        path: kubernetes.conf

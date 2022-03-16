@@ -1,4 +1,6 @@
 # created by virtualenv automatically
 pyvenv.cfg
 __pycache__/
+dev/
+k8s/back_up/
 
