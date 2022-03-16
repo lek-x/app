@@ -11,10 +11,7 @@ from flask import Flask, request, render_template
 import requests
 from dateutil.relativedelta import relativedelta
 
-####Date section [Depreciated]
-#today=datetime.today().strftime('%Y-%m-%d')
-#year_ago=datetime.today() - relativedelta(years=1)
-#year_ago=(str(year_ago))[0:10]
+
 city = 2123260
 ##### Env. section
 dname=os.environ.get("dname")
@@ -139,6 +136,10 @@ def index():
                 #do insert
                 cursor.execute(query)
                 conn.commit()
+                 #read from db
+                cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+                cursor.execute("SELECT * from mes")
+                posts = cursor.fetchall()
                 conn.close()
                 return render_template('index.html', posts=posts)
             except (Exception, psycopg2.DatabaseError) as error:
