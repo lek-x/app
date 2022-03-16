@@ -9,13 +9,16 @@ pipeline {
     environment {
         GITHUB_TOKEN=credentials('github-token')
         IMAGE_NAME='lek-x/app'
-        IMAGE_VERSION='1.0-b'
+        IMAGE_VERSION="${BUILD_NUMBER}"
         BranchName = "${BRANCH_NAME}"
     }
     stages {
-        stage('Debug') {
+        stage('Debug ENVs') {
             steps {
-                 echo "$BranchName"}
+                 echo "Branch name $BranchName"
+				 echo "Build number is $IMAGE_NAME"
+				 echo "Build number is $IMAGE_VERSION"
+				 }
             } 
         stage('Test'){
             steps{
@@ -30,6 +33,7 @@ pipeline {
         }    
         stage('Build docker image'){
             steps{
+			    echo "Current build version is $IMAGE_NAME:$IMAGE_VERSION"
                 sh "cd ${WORKSPACE}"
                 sh "sudo docker build . -t $IMAGE_NAME:$IMAGE_VERSION"
                 sh "sudo docker images"
@@ -52,6 +56,7 @@ pipeline {
         }
         stage('tag image'){
             steps{
+			     echo "Debug tag ${env.TG}"
                 sh 'sudo docker tag $IMAGE_NAME:$IMAGE_VERSION ghcr.io/$IMAGE_NAME:$IMAGE_VERSION'
             }
         }
@@ -89,6 +94,7 @@ def deploy(BranchName) {
              echo 'userInput: ' + userInput
              if(userInput == true) {
                 echo "Start deploying"
+                sh 'kubectl set image deployment/myapp myapp=ghcr.io/$IMAGE_NAME:$IMAGE_VERSION'
             } else {
                 echo "Action was aborted."
             }
@@ -97,7 +103,7 @@ def deploy(BranchName) {
       }		
 	else if ("${BranchName}" == 'test-dev') {
 	    echo "Deploy to test"
-		sh 'envsubst < $WORKSPACE/k8s/app_dep.yaml | kubectl apply -f - '
+		sh 'kubectl set image deployment/myapp myapp=ghcr.io/$IMAGE_NAME:$IMAGE_VERSION' 
 	}
 
 }

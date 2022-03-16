@@ -11,10 +11,10 @@ from flask import Flask, request, render_template
 import requests
 from dateutil.relativedelta import relativedelta
 
-####Date section
-today=datetime.today().strftime('%Y-%m-%d')
-year_ago=datetime.today() - relativedelta(years=1)
-year_ago=(str(year_ago))[0:10]
+####Date section [Depreciated]
+#today=datetime.today().strftime('%Y-%m-%d')
+#year_ago=datetime.today() - relativedelta(years=1)
+#year_ago=(str(year_ago))[0:10]
 city = 2123260
 ##### Env. section
 dname=os.environ.get("dname")
@@ -23,6 +23,12 @@ dpass=os.environ.get("dpass")
 dbhost=os.environ.get("dbhost")
 prt=os.environ.get("prt")
 
+def calc_date():
+    global today,year_ago
+    today=datetime.today().strftime('%Y-%m-%d')
+    year_ago=datetime.today() - relativedelta(years=1)
+    year_ago=(str(year_ago))[0:10]
+    return today,year_ago
 
 def get_today():
     "get data today weather"
@@ -83,9 +89,10 @@ def index():
             if conn is not None:
                 conn.close()
     if request.method == 'POST':
+        calc_date()
         get_today()
         get_yearago()
-        print("debug-post",td)
+        print("debug-post",yg,td)
         try:
             #connect to db
             conn = get_db_connection()

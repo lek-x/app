@@ -1,0 +1,6 @@
+# create cwagent service account and role binding
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: cloudwatch-agent
+  namespace: amazon-cloudwatch

@@ -20,5 +20,7 @@ spec:
         env:
           - name: ELASTICSEARCH_URL
             value: http://elasticsearch:9200
+          - name: NODE_OPTIONS
+            value: --max-old-space-size=1024
         ports:
         - containerPort: 5601
