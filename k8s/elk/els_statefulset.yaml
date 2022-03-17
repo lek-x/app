@@ -37,6 +37,12 @@ spec:
             value: "127.0.0.1, [::1]"
           - name: ES_JAVA_OPTS
             value: "-Xms512m -Xmx512m"
+          - name: ES_JAVA_OPTS
+            value: "-Des.index.max_number_of_shards=1"
+          - name: ES_JAVA_OPTS
+            value: "-Des.index.number_of_replicas=0"
+          - name: bootstrap.memory_lock
+            value: "true"
       initContainers:
       - name: fix-permissions
         image: busybox

@@ -1,0 +1,231 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prometheus-server-conf
+  labels:
+    name: prometheus-server-conf
+  namespace: monitoring
+data:
+  prometheus.rules: |-
+    groups:
+    - name: Alerts
+      rules:
+      - alert: ContainerMemoryUsage
+        expr: (sum(container_memory_working_set_bytes{name!=""}) BY (instance, name) / sum(container_spec_memory_limit_bytes > 0) BY (instance, name) * 100) > 80
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: Container Memory usage (instance {{ $labels.instance }})
+          description: "Container Memory usage is above 80%\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+      - alert: ContainerVolumeUsage
+        expr: (1 - (sum(container_fs_inodes_free{name!=""}) BY (instance) / sum(container_fs_inodes_total) BY (instance))) * 100 > 80
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: Container Volume usage (instance {{ $labels.instance }})
+          description: "Container Volume usage is above 80%\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+      - alert: ContainerVolumeIoUsage
+        expr: (sum(container_fs_io_current{name!=""}) BY (instance, name) * 100) > 80
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: Container Volume IO usage (instance {{ $labels.instance }})
+          description: "Container Volume IO usage is above 80%\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+      - alert: ContainerHighThrottleRate
+        expr: rate(container_cpu_cfs_throttled_seconds_total[3m]) > 1
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: Container high throttle rate (instance {{ $labels.instance }})
+          description: "Container is being throttled\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"    
+      - alert: HostMemoryUnderMemoryPressure
+        expr: rate(node_vmstat_pgmajfault[1m]) > 1000
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: Host memory under memory pressure (instance {{ $labels.instance }})
+          description: "Node memory is filling up (< 10% left)\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+      - alert: HostOutOfDiskSpace
+        expr: (node_filesystem_avail_bytes * 100) / node_filesystem_size_bytes < 10 and ON (instance, device, mountpoint) node_filesystem_readonly == 0
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: Host out of disk space (instance {{ $labels.instance }})
+          description: "Disk is almost full (< 10% left)\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"    
+      - alert: PostgresqlDown
+        expr: pg_up == 0
+        for: 0m
+        labels:
+          severity: critical
+        annotations:
+          summary: Postgresql down (instance {{ $labels.instance }})
+          description: "Postgresql instance is down\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+      - alert: ElasticsearchHeapUsageTooHigh
+        expr: (elasticsearch_jvm_memory_used_bytes{area="heap"} / elasticsearch_jvm_memory_max_bytes{area="heap"}) * 100 > 90
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: Elasticsearch Heap Usage Too High (instance {{ $labels.instance }})
+          description: "The heap usage is over 90%\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+      - alert: ElasticsearchHeapUsageWarning
+        expr: (elasticsearch_jvm_memory_used_bytes{area="heap"} / elasticsearch_jvm_memory_max_bytes{area="heap"}) * 100 > 80
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: Elasticsearch Heap Usage warning (instance {{ $labels.instance }})
+          description: "The heap usage is over 80%\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+      - alert: ElasticsearchDiskOutOfSpace
+        expr: elasticsearch_filesystem_data_available_bytes / elasticsearch_filesystem_data_size_bytes * 100 < 10
+        for: 0m
+        labels:
+          severity: critical
+        annotations:
+          summary: Elasticsearch disk out of space (instance {{ $labels.instance }})
+          description: "The disk usage is over 90%\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+      - alert: ElasticsearchRelocatingShardsTooLong
+        expr: elasticsearch_cluster_health_relocating_shards > 0
+        for: 15m
+        labels:
+          severity: warning
+        annotations:
+          summary: Elasticsearch relocating shards too long (instance {{ $labels.instance }})
+          description: "Elasticsearch has been relocating shards for 15min\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+      - alert: ContainerCpuUsage
+        expr: (sum(rate(container_cpu_usage_seconds_total{name!=""}[3m])) BY (instance, name) * 100) > 80
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: Container CPU usage (instance {{ $labels.instance }})
+          description: "Container CPU usage is above 80%\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+          
+  prometheus.yml: |-
+    global:
+      scrape_interval: 5s
+      evaluation_interval: 5s
+    rule_files:
+      - /etc/prometheus/prometheus.rules
+    alerting:
+      alertmanagers:
+      - scheme: http
+        static_configs:
+        - targets:
+          - "alertmanager.monitoring.svc:9093"
+    scrape_configs:
+      - job_name: 'node-exporter'
+        kubernetes_sd_configs:
+          - role: endpoints
+        relabel_configs:
+        - source_labels: [__meta_kubernetes_endpoints_name]
+          regex: 'node-exporter'
+          action: keep
+      
+      - job_name: 'kubernetes-apiservers'
+        kubernetes_sd_configs:
+        - role: endpoints
+        scheme: https
+        tls_config:
+          ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+        bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+        relabel_configs:
+        - source_labels: [__meta_kubernetes_namespace, __meta_kubernetes_service_name, __meta_kubernetes_endpoint_port_name]
+          action: keep
+          regex: default;kubernetes;https
+      - job_name: 'kubernetes-nodes'
+        scheme: https
+        tls_config:
+          ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+        bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+        kubernetes_sd_configs:
+        - role: node
+        relabel_configs:
+        - action: labelmap
+          regex: __meta_kubernetes_node_label_(.+)
+        - target_label: __address__
+          replacement: kubernetes.default.svc:443
+        - source_labels: [__meta_kubernetes_node_name]
+          regex: (.+)
+          target_label: __metrics_path__
+          replacement: /api/v1/nodes/${1}/proxy/metrics     
+      
+      - job_name: 'kubernetes-pods'
+        kubernetes_sd_configs:
+        - role: pod
+        relabel_configs:
+        - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
+          action: keep
+          regex: true
+        - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_path]
+          action: replace
+          target_label: __metrics_path__
+          regex: (.+)
+        - source_labels: [__address__, __meta_kubernetes_pod_annotation_prometheus_io_port]
+          action: replace
+          regex: ([^:]+)(?::\d+)?;(\d+)
+          replacement: $1:$2
+          target_label: __address__
+        - action: labelmap
+          regex: __meta_kubernetes_pod_label_(.+)
+        - source_labels: [__meta_kubernetes_namespace]
+          action: replace
+          target_label: kubernetes_namespace
+        - source_labels: [__meta_kubernetes_pod_name]
+          action: replace
+          target_label: kubernetes_pod_name
+      
+      - job_name: 'kube-state-metrics'
+        static_configs:
+          - targets: ['kube-state-metrics.kube-system.svc.cluster.local:8080']
+      - job_name: 'kubernetes-cadvisor'
+        scheme: https
+        tls_config:
+          ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+        bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+        kubernetes_sd_configs:
+        - role: node
+        relabel_configs:
+        - action: labelmap
+          regex: __meta_kubernetes_node_label_(.+)
+        - target_label: __address__
+          replacement: kubernetes.default.svc:443
+        - source_labels: [__meta_kubernetes_node_name]
+          regex: (.+)
+          target_label: __metrics_path__
+          replacement: /api/v1/nodes/${1}/proxy/metrics/cadvisor
+      
+      - job_name: 'kubernetes-service-endpoints'
+        kubernetes_sd_configs:
+        - role: endpoints
+        relabel_configs:
+        - source_labels: [__meta_kubernetes_service_annotation_prometheus_io_scrape]
+          action: keep
+          regex: true
+        - source_labels: [__meta_kubernetes_service_annotation_prometheus_io_scheme]
+          action: replace
+          target_label: __scheme__
+          regex: (https?)
+        - source_labels: [__meta_kubernetes_service_annotation_prometheus_io_path]
+          action: replace
+          target_label: __metrics_path__
+          regex: (.+)
+        - source_labels: [__address__, __meta_kubernetes_service_annotation_prometheus_io_port]
+          action: replace
+          target_label: __address__
+          regex: ([^:]+)(?::\d+)?;(\d+)
+          replacement: $1:$2
+        - action: labelmap
+          regex: __meta_kubernetes_service_label_(.+)
+        - source_labels: [__meta_kubernetes_namespace]
+          action: replace
+          target_label: kubernetes_namespace
+        - source_labels: [__meta_kubernetes_service_name]
+          action: replace
+          target_label: kubernetes_name

@@ -1,0 +1,31 @@
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  namespace: monitoring
+  name: alertmanager-bot-pv-vol
+  labels:
+    type: local
+    app: alertmanager-bot
+spec:
+  storageClassName: manual
+  capacity:
+    storage: 512Mi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/mnt/bot"
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  namespace: monitoring
+  name: alertmanager-bot-claim
+  labels:
+    app: alertmanager-bot
+spec:
+  storageClassName: manual
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 512Mi
