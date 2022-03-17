@@ -25,7 +25,7 @@ spec:
           - name: SERVER_BASEPATH
             value: "/kibana"
           - name: SERVER_REWRITEBASEPATH
-            value: "true"
+            value: "false"
         resources:
           limits:
             memory: 800Mi

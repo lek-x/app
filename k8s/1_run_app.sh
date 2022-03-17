@@ -27,7 +27,7 @@ kubectl create -f app/postgres_service.yaml
 sleep 1 
 
 
-echo '6: load APP configmap[skip]'
+echo '6: load APP configmap'
 kubectl create -f app/app_configmap.yaml 
 sleep 1 
 

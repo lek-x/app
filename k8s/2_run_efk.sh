@@ -43,6 +43,9 @@ echo '1.9: Deploy Fluentd Daemonset'
 kubectl create -f elk/fluentd_daemonset.yaml
 sleep 4
 
+echo "Waiting"
+sleep 4
+
 
 kubectl get svc
 

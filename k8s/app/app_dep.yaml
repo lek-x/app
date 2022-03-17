@@ -19,11 +19,11 @@ spec:
                 imagePullPolicy: Always
                 name: myapp
                 resources:
-                limits:
-                  memory: 600Mi
-                requests:
-                  cpu: 100m
-                  memory: 200Mi
+                  limits:
+                    memory: 600Mi
+                  requests:
+                    cpu: 100m
+                    memory: 200Mi
                 envFrom:
                   - secretRef:
                       name: app-secret

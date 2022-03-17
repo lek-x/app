@@ -9,8 +9,8 @@ metadata:
 spec:
   selector: 
     app: alertmanager
-  #type: NodePort  
   ports:
-    - port: 9093
-      #targetPort: 9093
-      #nodePort: 32000
+    - name: alertmanager
+      port: 9093
+      targetPort: 9093
+      protocol: TCP
