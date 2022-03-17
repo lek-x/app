@@ -22,5 +22,9 @@ spec:
             value: http://elasticsearch:9200
           - name: NODE_OPTIONS
             value: --max-old-space-size=1024
+          - name: SERVER_BASEPATH
+            value: "/kibana"
+          - name: SERVER_REWRITEBASEPATH
+            value: "true"
         ports:
         - containerPort: 5601

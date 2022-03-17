@@ -28,8 +28,8 @@ sleep 1
 
 
 echo '6: load APP configmap[skip]'
-#kubectl create -f app/app_configmap.yaml 
-#sleep 1 
+kubectl create -f app/app_configmap.yaml 
+sleep 1 
 
 
 echo '7: Create secret for APP'
