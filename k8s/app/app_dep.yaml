@@ -18,6 +18,12 @@ spec:
               - image: ghcr.io/lek-x/app:19
                 imagePullPolicy: Always
                 name: myapp
+                resources:
+                limits:
+                  memory: 600Mi
+                requests:
+                  cpu: 100m
+                  memory: 200Mi
                 envFrom:
                   - secretRef:
                       name: app-secret

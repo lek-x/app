@@ -43,6 +43,12 @@ spec:
             value: "-Des.index.number_of_replicas=0"
           - name: bootstrap.memory_lock
             value: "true"
+        resources:
+          limits:
+            memory: 1024Mi
+          requests:
+            cpu: 400m
+            memory: 700Mi
       initContainers:
       - name: fix-permissions
         image: busybox

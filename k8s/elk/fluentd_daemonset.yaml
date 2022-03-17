@@ -37,7 +37,7 @@ spec:
             memory: 200Mi
           requests:
             cpu: 100m
-            memory: 200Mi    
+            memory: 200Mi
         volumeMounts:
         #- name: fluentd-config
         #  mountPath: /fluentd/etc/kubernetes.conf
