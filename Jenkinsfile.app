@@ -94,8 +94,8 @@ def deploy(BranchName) {
              echo 'userInput: ' + userInput
              if(userInput == true) {
                 echo "Start deploying"
-                sh 'kubectl config use-context arn:aws:eks:eu-central-1:283243481187:cluster/mycluster-v2 \
-                  && kubectl set image deployment/myapp myapp=ghcr.io/$IMAGE_NAME:$IMAGE_VERSION'
+                sh 'sudo kubectl config use-context arn:aws:eks:eu-central-1:283243481187:cluster/mycluster-v2 \
+                  && sudo kubectl set image deployment/myapp myapp=ghcr.io/$IMAGE_NAME:$IMAGE_VERSION'
             } else {
                 echo "Action was aborted."
             }
