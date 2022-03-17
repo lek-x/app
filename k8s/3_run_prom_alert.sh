@@ -4,6 +4,8 @@
 
 echo "Stage: Deploy Prometheus"
 sleep 2
+echo '1: Deploy kube_state_metrics'
+kubectl create -f prom/kube_state_metrics.yaml
 
 echo '1: Create namespace'
 kubectl create -f prom/prom_namespace.yaml

@@ -53,6 +53,10 @@ echo '12: Destroy namespace'
 kubectl delete -f prom/prom_namespace.yaml
 
 
+echo '13: Destroy kube_state_metrics'
+kubectl delete -f prom/kube_state_metrics.yaml
+
+
 
 
 
