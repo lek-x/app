@@ -20,18 +20,18 @@ pipeline {
 				 echo "Build number is $IMAGE_VERSION"
 				 }
             } 
-        stage('Test'){
+        stage('Linter checking'){
             steps{
                 sh "cd ${WORKSPACE}"
                 sh "pylint --py3k hello.py init_db.py"
                 }
             }
-        stage('Cleanup'){
+        stage('Cleanup Docker elements'){
             steps{
                 sh "sudo docker system prune -a --volumes --force"
             }
         }    
-        stage('Build docker image'){
+        stage('Build Docker image'){
             steps{
 			    echo "Current build version is $IMAGE_NAME:$IMAGE_VERSION"
                 sh "cd ${WORKSPACE}"
@@ -39,7 +39,7 @@ pipeline {
                 sh "sudo docker images"
             }    
         }
-        stage('Checkin image by grype'){
+        stage('Checking Docker image by  Acnhore grype'){
             environment {
             iid = sh(returnStdout: true, returnStatus: false, script: 'sudo docker images -q $IMAGE_NAME').trim()
             }
@@ -48,30 +48,30 @@ pipeline {
                 sh "sudo grype ${env.iid} -f high"
             }
         }
-        stage('login to github_con_reg'){
+        stage('Logging into Github registry'){
             steps{
                 sh 'echo $GITHUB_TOKEN_PSW | sudo docker login ghcr.io -u $GITHUB_TOKEN_USR --password-stdin'
                 
             }
         }
-        stage('tag image'){
+        stage('Tagging Docker image'){
             steps{
 			     echo "Debug tag ${env.TG}"
                 sh 'sudo docker tag $IMAGE_NAME:$IMAGE_VERSION ghcr.io/$IMAGE_NAME:$IMAGE_VERSION'
             }
         }
-        stage('push image'){
+        stage('Pushing Docker image to registry'){
             steps{
                 sh 'sudo docker push ghcr.io/$IMAGE_NAME:$IMAGE_VERSION'
             }
         }
-        stage('Deploy if master'){
+        stage('Deploy New build if master'){
           when{environment name: 'BranchName', value: 'master'}
             steps{
               deploy('master')
              }
             }
-        stage('Deploy if test-dev'){
+        stage('Deploy New build test-dev'){
           when{environment name: 'BranchName', value: 'test-dev'}
             steps{
               deploy('test-dev')
@@ -97,7 +97,7 @@ def deploy(BranchName) {
                 sh 'sudo kubectl config use-context arn:aws:eks:eu-central-1:283243481187:cluster/mycluster-v2 \
                   && sudo kubectl set image deployment/myapp myapp=ghcr.io/$IMAGE_NAME:$IMAGE_VERSION'
             } else {
-                echo "Action was aborted."
+                echo "Action was aborted by user $BUILD_USER"
             }
 
         }
