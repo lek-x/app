@@ -1,8 +1,10 @@
 #!/bin/bash
 
-####Destroy
+####Deploy NGINX ingress controller
 
-echo "Deploy  NGINX Ingress controller"
-kubectl create -f nginx_ingress/nginx_ing_v2.yaml
+echo "Stage 0:"
+
+echo "1: Deploy  NGINX Ingress controller"
+kubectl create -f nginx_ing_contr/nginx_ing_contr.yaml
 
 

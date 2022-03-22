@@ -2,10 +2,10 @@
 
 ####Preparing
 
-echo "Stage: Deploy APP"
+echo "Stage 1: Deploy APP and DB"
 sleep 3
 
-echo '1: Load Registry credential'
+echo '1: Load Docker Registry credential'
 kubectl create -f app/docker_secret.yaml 
 sleep 1
 
@@ -27,10 +27,9 @@ kubectl create -f app/postgres_service.yaml
 sleep 1 
 
 
-echo '6: load APP configmap'
+echo '6: Load APP configmap'
 kubectl create -f app/app_configmap.yaml 
 sleep 1 
-
 
 echo '7: Create secret for APP'
 kubectl create -f app/app_secret.yaml
@@ -39,7 +38,6 @@ sleep 1
 echo '8: Deploy APP'
 kubectl create -f app/app_dep.yaml
 sleep 1 
-
 
 echo '9: Create network service for PSQL'
 kubectl create -f app/app_service.yaml 
