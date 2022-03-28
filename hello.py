@@ -22,8 +22,13 @@ prt=os.environ.get("prt")
 
 def calc_date():
     global today,year_ago
-    today=datetime.today().strftime('%Y-%m-%d')
-    year_ago=datetime.today() - relativedelta(years=1)
+    #today=datetime.today().strftime('%Y-%m-%d')
+    #year_ago=datetime.today() - relativedelta(years=1)
+    #year_ago=(str(year_ago))[0:10]
+    #return today,year_ago
+    today=datetime.today()-relativedelta(days=1)
+    today = (str(today))[0:10]
+    year_ago=datetime.today() - relativedelta(years=1)-relativedelta(days=1)
     year_ago=(str(year_ago))[0:10]
     return today,year_ago
 
