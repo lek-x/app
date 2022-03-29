@@ -7,7 +7,7 @@ pipeline {
 	timestamps ()
 	}
     environment {
-        GITHUB_TOKEN=credentials('github-token')
+        GITHUB_TOKEN=credentials('vault-github')
         IMAGE_NAME='lek-x/app'
         IMAGE_VERSION="${BUILD_NUMBER}"
         BranchName = "${BRANCH_NAME}"

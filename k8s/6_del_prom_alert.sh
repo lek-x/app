@@ -57,18 +57,15 @@ echo '11: Destroy Alertmnager template'
 kubectl delete -f prom/alertm_template.yaml
 sleep 1
 
-echo '12: Destroy namespace'
-kubectl delete -f prom/prom_namespace.yaml
-sleep 1
 
 ##############kube state metrics
-echo '13: Destroy kube_state_metrics'
+echo '12: Destroy kube_state_metrics'
 kubectl delete -f prom/kube_state_metrics.yaml
 sleep 1
 
 
 ##############Grafana
-echo '14: Destroy Grafana deployment'
+echo '13: Destroy Grafana deployment'
 kubectl delete -f prom/grafana_dep.yaml
 sleep 1
 
@@ -76,10 +73,13 @@ echo '14: Destroy Grafana configmap'
 kubectl delete -f prom/grafana_configmap.yaml
 sleep 1
 
-echo '14: Destroy Grafana Service'
+echo '15: Destroy Grafana Service'
 kubectl delete -f prom/grafana_svc.yaml
 sleep 1
 
+echo '16: Destroy namespace'
+kubectl delete -f prom/prom_namespace.yaml
+sleep 1
 
 
 
