@@ -7,7 +7,6 @@ pipeline {
 	timestamps ()
 	}
     environment {
-        GITHUB_TOKEN=credentials('vault-github')
         IMAGE_NAME='lek-x/app'
         IMAGE_VERSION="${BUILD_NUMBER}"
         BranchName = "${BRANCH_NAME}"
@@ -50,7 +49,9 @@ pipeline {
         }
         stage('Logging into Github registry'){
             steps{
-                sh 'echo $GITHUB_TOKEN_PSW | sudo docker login ghcr.io -u $GITHUB_TOKEN_USR --password-stdin'
+			     withCredentials([[$class: 'VaultUsernamePasswordCredentialBinding', credentialsId: 'vault-github', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME']]) {
+                 sh ('echo $PASSWORD | sudo docker login ghcr.io -u $USERNAME --password-stdin')
+                 }
                 
             }
         }
