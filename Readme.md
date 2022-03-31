@@ -23,7 +23,8 @@ It is a python based app to retrive data about Wheather in St.Petersburg for yes
   - Vault [optional]
   - Jenkins server [optional]
 
-[Optional]
+**[Optional]**
+
 Jenkins uses to automatic deploy new versions of app.
 Vault uses to recieve secretes to the Jenkins. If you won't use Vault, edit **"Logging into Github registry"** step in Jenkinsfile, remove/replace **"withCredentionals"** statement. 
 
