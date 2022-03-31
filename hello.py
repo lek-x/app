@@ -11,7 +11,7 @@ from flask import Flask, request, render_template
 import requests
 from dateutil.relativedelta import relativedelta
 
-
+###Set desired city
 city = 2123260
 ##### Env. section
 dname=os.environ.get("dname")
@@ -21,19 +21,20 @@ dbhost=os.environ.get("dbhost")
 prt=os.environ.get("prt")
 
 def calc_date():
+    "calculatin dates for request"
     global today,year_ago
     #today=datetime.today().strftime('%Y-%m-%d')
     #year_ago=datetime.today() - relativedelta(years=1)
     #year_ago=(str(year_ago))[0:10]
     #return today,year_ago
-    today=datetime.today()-relativedelta(days=1)
+    today=datetime.today()-relativedelta(days=1) ##get today minus 1 day
     today = (str(today))[0:10]
-    year_ago=datetime.today() - relativedelta(years=1)-relativedelta(days=1)
+    year_ago=datetime.today() - relativedelta(years=1)-relativedelta(days=1) ##get today minus 1 year minus 1 day
     year_ago=(str(year_ago))[0:10]
     return today,year_ago
 
 def get_today():
-    "get data today weather"
+    "get data today weather(actually for yesterday, see calc_date"
     url = 'https://www.metaweather.com/api/location/'+str(city)
     params = { 'format': 'json'}
     r = requests.get(url, params=params)

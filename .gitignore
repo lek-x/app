@@ -3,4 +3,5 @@ pyvenv.cfg
 __pycache__/
 dev/
 k8s/back_up/
+k8s/prom/prom_bot_depl.yaml
 

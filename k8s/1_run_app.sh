@@ -9,7 +9,10 @@ echo '1: Load Docker Registry credential'
 kubectl create -f app/docker_secret.yaml 
 sleep 1
 
-echo '2: load PSQL configmap'
+echo '2.1: load PSQL secret'
+kubectl create -f app postgres_secret.yaml
+
+echo '2.2: load PSQL configmap'
 kubectl create -f app/postgres_configmap.yaml 
 sleep 1
 

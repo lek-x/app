@@ -42,6 +42,8 @@ echo '9: Delete PSQL configmap'
 kubectl delete -f app/postgres_configmap.yaml 
 sleep 1
 
+echo '10: Delete PSQL secret'
+kubectl delete -f app/postgres_secret.yaml 
 
 
 
