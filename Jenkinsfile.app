@@ -94,7 +94,7 @@ def deploy(BranchName) {
              def userInput = input(id: 'Proceed1', message: 'Promote build?', parameters: [[$class: 'BooleanParameterDefinition', defaultValue: true, description: '', name: 'Please confirm you agree with this']])
              echo 'userInput: ' + userInput
              if(userInput == true) {
-                echo "Start deploying"
+                echo "Start deploying to Prod Env"
                 sh 'sudo kubectl config use-context arn:aws:eks:eu-central-1:283243481187:cluster/mycluster-v2 \
                   && sudo kubectl set image deployment/myapp myapp=ghcr.io/$IMAGE_NAME:$IMAGE_VERSION'
             } else {
@@ -104,7 +104,7 @@ def deploy(BranchName) {
         }
       }		
 	else if ("${BranchName}" == 'test-dev') {
-	    echo "Deploy to test"
+	    echo "Start Deploying to test Env"
 		sh 'kubectl set image deployment/myapp myapp=ghcr.io/$IMAGE_NAME:$IMAGE_VERSION' 
 	}
 

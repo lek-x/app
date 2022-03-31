@@ -1,9 +1,10 @@
-# This is My Diploma project of Deploying App in k8s. 
+# This is My Diploma project of Deploying Python App in k8s. 
 
 ## Description:
 This code deploys my python application in k8s cluster in AWS EKS. Also it has:
 
 **Logging system** - Fleuntd, Elasticsearch, Kibana
+
 **Monitoring system** - Prometheus, AlertManager, Node Exporter, Grafana, TelegramBot support container.
 
 ## About App:
@@ -17,10 +18,15 @@ It is a python based app to retrive data about Wheather in St.Petersburg for yes
   - aws cli tool
   - pylinter
   - Anchore Grype tool 
-  - Jenkins server
   - Docker on host OS
   - k8s cluster 
-  -  Vault [optioanl]
+  - Vault [optional]
+  - Jenkins server [optional]
+
+[Optional]
+Jenkins uses to automatic deploy new versions of app.
+Vault uses to recieve secretes to the Jenkins. If you won't use Vault, edit **"Logging into Github registry"** step in Jenkinsfile, remove/replace **"withCredentionals"** statement. 
+
 
 For deploy k8s you may use this [terraform code](https://github.com/lek-x/eks_cluster_terr)
 
