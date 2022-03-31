@@ -67,15 +67,15 @@ For deploy k8s you may use this [terraform code](https://github.com/lek-x/eks_cl
 
 1. **City**: In hello.py app you can change desired city. See https://www.metaweather.com/api/location/ 
 2. **Dates for weather**: In hello.py see ***def calc_date()*** to change wheather's dates.
-3. **User/pass for DB**: It sets by k8s/app/**app_configmap.yaml** and **app_secret.yaml**, don't forget to change **postgres_configmap.yaml** and **postgres_secret.yaml**.
+3. **User/pass for DB**: It sets by "k8s/app/**app_configmap.yaml**" and "**app_secret.yaml**", don't forget to change it in "**postgres_configmap.yaml**" and "**postgres_secret.yaml**".
     ```
-    echo -n "your_data" | base64
+    echo -n "your_pass" | base64
     ```
 ## 2. Telegram Bot container
-To use alertS through Telegram Bot you need to create a new Bot with **BotFather**, get ID and token from **BotFather**. Then insert your Token and ID in **k8s/prom/prom_bot_depl.yaml.example** and rename it to **prom_bot_depl.yaml**
+To use alerts through Telegram Bot you need to create a new Bot with **BotFather**, get ID and token from **BotFather**. Then insert your Token and ID in **k8s/prom/prom_bot_depl.yaml.example** and rename it to **prom_bot_depl.yaml**
 
 ## 3. Security
-1. To change **base_auth** to access to services set new **user:pass** in k8s/nginx_ingress/**nginx_base_auth_secret.yaml**. Use next commands to generate basict_auth string.
+1. To change **base_auth** to access to services set new **user:pass** in "k8s/nginx_ingress/**nginx_base_auth_secret.yaml**". Use next commands to generate basict_auth string.
     ```
     htpasswd -c auth username
     ```
