@@ -8,7 +8,7 @@ This code deploys my python application in k8s cluster in AWS EKS. Also it has:
 **Monitoring system** - Prometheus, AlertManager, Node Exporter, Grafana, TelegramBot support container.
 
 ## About App:
-It is a python based app to retrive data about Wheather in St.Petersburg for yesterday and year ago. It stores data in DB.
+It is a python based app to retrive data about Wheather in St.Petersburg for yesterday and year ago. It stores data in DB. You can change code to get another behavior.
 
 
 ## Requrements: 
@@ -26,7 +26,7 @@ It is a python based app to retrive data about Wheather in St.Petersburg for yes
 **[Optional]**
 
 Jenkins uses to automatic deploy new versions of app.
-Vault uses to recieve secretes to the Jenkins. If you won't use Vault, edit **"Logging into Github registry"** step in Jenkinsfile, remove/replace **"withCredentionals"** statement. 
+Vault uses to pass on secretes to the Jenkins. If you won't use Vault, edit **"Logging into Github registry"** step in Jenkinsfile, remove/replace **"withCredentionals"** statement. 
 
 
 For deploy k8s you may use this [terraform code](https://github.com/lek-x/eks_cluster_terr)
