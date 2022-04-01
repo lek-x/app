@@ -18,7 +18,7 @@ sleep 1
 
 
 echo '4: Delete APP configmap'
-kubectl delete -f app_configmap.yaml 
+kubectl delete -f app/app_configmap.yaml 
 sleep 1
 
 echo '5: Delete PSQL Service'
@@ -44,6 +44,15 @@ sleep 1
 
 echo '10: Delete PSQL secret'
 kubectl delete -f app/postgres_secret.yaml 
+
+
+echo "11: Destroy  Metrics-server"
+kubectl delete -f hpa/components.yaml
+
+
+echo "12: Deploy  auto scaler"
+kubectl delete -f hpa/auto_scaler.yaml
+
 
 
 

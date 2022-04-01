@@ -12,7 +12,7 @@ sleep 1
 kubectl delete -f nginx_ingress/grafana_ingress.yaml
 sleep 1
 
-kubectl delete -f nginx_ingress/nginx_secret.yaml
+kubectl delete -f nginx_ingress/nginx_base_auth_secret.yaml
 sleep 1
 
 kubectl delete -f nginx_ing_contr/nginx_ing_contr.yaml

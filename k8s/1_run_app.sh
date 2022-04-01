@@ -10,7 +10,7 @@ kubectl create -f app/docker_secret.yaml
 sleep 1
 
 echo '2.1: load PSQL secret'
-kubectl create -f app postgres_secret.yaml
+kubectl create -f app/postgres_secret.yaml
 
 echo '2.2: load PSQL configmap'
 kubectl create -f app/postgres_configmap.yaml 
@@ -45,6 +45,11 @@ sleep 1
 echo '9: Create network service for PSQL'
 kubectl create -f app/app_service.yaml 
 sleep 1 
+
+echo '10: Create HorizontalPodAutoscaler'
+kubectl create -f hpa/app_hpa.yaml
+sleep 1 
+
 
 
 kubectl get svc 
